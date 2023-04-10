@@ -1,4 +1,4 @@
-from torch.nn import nn
+import torch.nn as nn
 from attention import Attention
 
 class MultiHeadCrossAttention(nn.Module, Attention):
