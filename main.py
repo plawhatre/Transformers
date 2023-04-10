@@ -20,4 +20,9 @@ if __name__ == '__main__':
     p_drop = params['global']['p_drop']
     Nx = params['global']['Nx']
 
-    
+    # Sentence for encoder block
+    x = torch.randn((batch_size, seq_length, inp_dim))
+    # Sentence for decoder block
+    y = torch.randn((batch_size, seq_length, inp_dim))
+
+
