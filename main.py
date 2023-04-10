@@ -30,4 +30,12 @@ if __name__ == '__main__':
     # Sentence for decoder block
     y = torch.randn((batch_size, seq_length, inp_dim))
 
+    # forward pass
+    encoder = StackedEncoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
+    decoder = StackedDecoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
+    
+    x_out = encoder(x)
+    out = decoder(y, x_out)
+    print(out)
+
 
