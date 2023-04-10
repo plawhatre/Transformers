@@ -1,9 +1,7 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import numpy as np
-import math 
 import yaml
+import torch.nn.functional as F
+from attention import Attention
 
 if __name__ == '__main__':
     # Read yaml file and load params
