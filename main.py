@@ -24,15 +24,15 @@ if __name__ == '__main__':
     y = torch.randn((batch_size, max_seq_len, inp_dim))
 
     # positional encoding
-    x_encoding = PositionalEncoding(*x.shape)
-    y_encoding = PositionalEncoding(*y.shape)
+    x_encoding = PositionalEncoding(*x.shape)()
+    y_encoding = PositionalEncoding(*y.shape)()
 
     # forward pass
     encoder = StackedEncoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
     decoder = StackedDecoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
     
-    x_out = encoder(x+x_encoding())
-    out = decoder(y+y_encoding(), x_out)
+    x_out = encoder(x + x_encoding)
+    out = decoder(y + y_encoding, x_out)
     print(out)
 
 
