@@ -9,7 +9,7 @@ class MultiHeadAttention(nn.Module, Attention):
     self.num_heads = num_heads
     self.head_dim = d_model // num_heads
 
-    self.qkv_layer = nn.Linear(inp_dim, 3*d_model)
+    self.qkv_layer = nn.Linear(inp_dim, 3*d_model, bias=False)
     self.linear_layer = nn.Linear(d_model, d_model)
 
   def forward(self, x, mask=None):

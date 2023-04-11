@@ -9,8 +9,8 @@ class MultiHeadCrossAttention(nn.Module, Attention):
     self.num_heads = num_heads
     self.head_dim = d_model // num_heads
 
-    self.kv_layer = nn.Linear(d_model, 2 * d_model)
-    self.q_layer = nn.Linear(d_model, d_model)
+    self.kv_layer = nn.Linear(d_model, 2 * d_model, bias=False)
+    self.q_layer = nn.Linear(d_model, d_model, bias=False)
     self.linear_layer = nn.Linear(d_model, d_model)
 
   def forward(self, x, encoder_out, mask=None):
