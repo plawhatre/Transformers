@@ -1,8 +1,6 @@
 global:
   batch_size:
     1
-  seq_length:
-    4
   inp_dim:
     512
   d_model:
