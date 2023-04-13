@@ -1,2 +1,4 @@
 transformer
 __pycache__
+*.zip
+data
