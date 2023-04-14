@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset, DataLoader
 
-def TextDataset(Dataset):
+class TextDataset(Dataset):
     def __init__(self, src_sent, dst_sent):
         self.src_sent = src_sent
         self.dst_sent = dst_sent
