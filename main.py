@@ -1,12 +1,9 @@
 import yaml
-from positional_encoding import PositionalEncoding
-from encoder_layer import StackedEncoder
-from decoder_layer import StackedDecoder
 from glob import glob
 
 from torch.utils.data import DataLoader
 from text_dataset import TextDataset
-from sentence_embedding import SentenceEmbedding
+from transformer_model import Transformer
 
 if __name__ == '__main__':
     # Read yaml file and load params
@@ -46,25 +43,12 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     # temporary
-    eng, mar =  next(iter(train_loader))
+    src_lang_sent, dst_lang_sent =  next(iter(train_loader))
+    model = Transformer(batch_size, max_seq_len, d_model, Nx, 
+                        inp_dim, d_hidden, num_heads, p_drop, 
+                        train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
+    out = model(src_lang_sent, dst_lang_sent)
 
-    src_se = SentenceEmbedding(batch_size, max_seq_len, d_model, train_dataset.get_src_vocab)
-    dst_se = SentenceEmbedding(batch_size, max_seq_len, d_model, train_dataset.get_dst_vocab)
-
-    # Sentence encoding
-    x = src_se(eng)
-    y = dst_se(mar)
-
-    # positional encoding
-    x_encoding = PositionalEncoding(*x.shape)()
-    y_encoding = PositionalEncoding(*y.shape)()
-
-    # forward pass
-    encoder = StackedEncoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
-    decoder = StackedDecoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
-    
-    x_out = encoder(x + x_encoding)
-    out = decoder(y + y_encoding, x_out)
     print(out)
 
 
