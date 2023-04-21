@@ -3,6 +3,7 @@ import torch.nn as nn
 
 class PositionalEncoding(nn.Module):
   def __init__(self, batch_size, max_seq_len, inp_dim):
+    super().__init__()
     self.batch_size = batch_size
     self.max_seq_len = max_seq_len
     self.inp_dim = inp_dim
