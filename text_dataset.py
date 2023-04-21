@@ -10,11 +10,11 @@ class TextDataset(Dataset):
 
     @property
     def get_src_vocab(self):
-        return TextDataset._build_vocab(self.src_sent, self.start_token)
+        return TextDataset._build_vocab(self.src_sent, self.start_token, self.end_token)
 
     @property
     def get_dst_vocab(self):
-        return TextDataset._build_vocab(self.dst_sent, self.end_token)
+        return TextDataset._build_vocab(self.dst_sent, self.start_token, self.end_token)
 
     @staticmethod
     def _build_vocab(sentences, start_token, end_token):
