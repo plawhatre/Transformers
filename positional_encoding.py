@@ -1,12 +1,13 @@
 import torch
+import torch.nn as nn
 
-class PositionalEncoding:
+class PositionalEncoding(nn.Module):
   def __init__(self, batch_size, max_seq_len, inp_dim):
     self.batch_size = batch_size
     self.max_seq_len = max_seq_len
     self.inp_dim = inp_dim
 
-  def __call__(self):
+  def forward(self):
     even_i = torch.arange(0, self.inp_dim, 2).float()
     odd_i = torch.arange(1, self.inp_dim, 2).float()
     even_denominator = torch.pow(1e4, even_i/self.inp_dim)
