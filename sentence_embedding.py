@@ -2,9 +2,11 @@ from positional_encoding import PositionalEncoding
 import torch.nn as nn
 
 class SentenceEmbedding(nn.Module):
-    def __init__(self, batch_size, max_seq_len, d_model, vocab_size):
+    def __init__(self, batch_size, max_seq_len, d_model, vocab):
         super().__init__()
-        self.embedding = nn.Embedding(vocab_size, d_model)
+        self.vocab = vocab
+        self.vocab_size = len(vocab)
+        self.embedding = nn.Embedding(self.vocab_size, d_model)
         self.pos_encoding = PositionalEncoding(batch_size, max_seq_len, d_model)
         self.dropout = nn.Dropout(p=0.1)
 
