@@ -35,10 +35,6 @@ if __name__ == '__main__':
     with open(dst_folder, 'r') as f:
         dst_sent = f.readlines() 
 
-    # Sentence for encoder block
-    # x = torch.randn((batch_size, max_seq_len, inp_dim))
-    # # Sentence for decoder block
-    # y = torch.randn((batch_size, max_seq_len, inp_dim))
 
     src_sent = src_sent[:sent_limit]
     dst_sent = dst_sent[:sent_limit]
@@ -55,6 +51,7 @@ if __name__ == '__main__':
     src_se = SentenceEmbedding(batch_size, max_seq_len, d_model, train_dataset.get_src_vocab)
     dst_se = SentenceEmbedding(batch_size, max_seq_len, d_model, train_dataset.get_dst_vocab)
 
+    # Sentence encoding
     x = src_se(eng)
     y = dst_se(mar)
 
