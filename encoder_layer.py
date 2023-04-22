@@ -13,9 +13,9 @@ class EncoderLayer(nn.Module):
     self.dropout_ffn = nn.Dropout(p=p_drop) 
     self.add_norm_ffn = LayerNormalization(d_model, eps)
 
-  def forward(self, x):
+  def forward(self, x, encoder_mask):
     x_residual = x.clone()
-    x = self.attention(x, mask=None)
+    x = self.attention(x, mask=encoder_mask)
     x = self.dropout_attention(x)
     x = self.add_norm_attention(x + x_residual)
 
@@ -25,11 +25,18 @@ class EncoderLayer(nn.Module):
     x = self.add_norm_ffn(x + x_residual)
 
     return x
-  
+
+class SequentialEncoder(nn.Sequential):
+  def forward(self, *args):
+    x, encoder_out = args
+    for module in self._modules.values():
+      x = module(x, encoder_out)
+    return x
+
 class StackedEncoder(nn.Module):
   def __init__(self, Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5):
     super(StackedEncoder, self).__init__()
-    self.layers = nn.Sequential(*[EncoderLayer(inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5) for _ in range(Nx)])
+    self.layers = SequentialEncoder(*[EncoderLayer(inp_dim, d_model, d_hidden, num_heads, p_drop, eps=eps) for _ in range(Nx)])
 
-  def forward(self, x):
-    return self.layers(x)
+  def forward(self, x, encoder_mask):
+    return self.layers(x, encoder_mask)
