@@ -33,6 +33,12 @@ class Transformer(nn.Module):
         x_encoding = PositionalEncoding(*x.shape)()
         y_encoding = PositionalEncoding(*y.shape)()
 
-        x_out = self.encoder(x + x_encoding)
-        out = self.decoder(y + y_encoding, x_out)
+        # masking
+        encoder_mask = self.src_sent_encode.create_encoder_mask(src_lang_sent)
+        decoder_mask = self.src_sent_encode.create_decoder_mask(dst_lang_sent)
+        encoder_decoder_mask = self.src_sent_encode.\
+            create_encoder_decoder_mask(src_lang_sent, dst_lang_sent)
+        
+        x_out = self.encoder(x + x_encoding, encoder_mask)
+        out = self.decoder(y + y_encoding, x_out, decoder_mask, encoder_decoder_mask)
         return out
