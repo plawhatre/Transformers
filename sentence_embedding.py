@@ -1,11 +1,13 @@
 from positional_encoding import PositionalEncoding
 import torch.nn as nn
 import torch
+import math
 
 class SentenceEmbedding(nn.Module):
     def __init__(self, batch_size, max_seq_len, d_model, vocab):
         super().__init__()
         self.vocab = vocab
+        self.batch_size = batch_size
         self.vocab_size = len(vocab)
         self.max_seq_len = max_seq_len
         self.embedding = nn.Embedding(self.vocab_size, d_model)
@@ -30,3 +32,34 @@ class SentenceEmbedding(nn.Module):
         y += self.pos_encoding()
         y = self.dropout(y)
         return y
+    
+    def create_encoder_mask(self, batch_src_sent):
+        encoder_mask = torch.full((self.batch_size,self.max_seq_len, self.max_seq_len), 
+                                  -math.inf)
+        for idx, sent in enumerate(batch_src_sent):
+            len_sent = len(sent.split())
+            encoder_mask[idx, :(len_sent), :(len_sent)] = 0
+
+        return encoder_mask
+
+    def create_decoder_mask(self, batch_dst_sent):
+        decoder_mask = torch.full((self.batch_size,self.max_seq_len, self.max_seq_len), 
+                                  -math.inf)
+        decoder_mask = torch.triu(decoder_mask, diagonal=1)
+
+        for idx, sent in enumerate(batch_dst_sent):
+            len_sent = len(sent.split())
+            decoder_mask[idx, (len_sent+1):, (len_sent+1):] = -math.inf
+
+        return decoder_mask
+
+    def create_encoder_decoder_mask(self, batch_src_sent, batch_dst_sent):
+        encoder_decoder_mask = torch.full((self.batch_size,self.max_seq_len, self.max_seq_len), 
+                                  -math.inf)
+        for idx, src_dst_sent in enumerate(zip(batch_src_sent, batch_dst_sent)):
+            src_sent, dst_sent = src_dst_sent[0], src_dst_sent[1] 
+            len_src_sent = len(src_sent.split())
+            len_dst_sent = len(dst_sent.split())
+            encoder_decoder_mask[idx, :(len_dst_sent), :(len_src_sent)] = 0
+
+        return encoder_decoder_mask

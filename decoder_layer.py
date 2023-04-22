@@ -19,21 +19,17 @@ class DecoderLayer(nn.Module):
     self.dropout_ffn = nn.Dropout(p=p_drop) 
     self.add_norm_ffn = LayerNormalization(d_model, eps)
 
-  def forward(self, x, encoder_out):
+  def forward(self, x, encoder_out, decoder_mask, encoder_decoder_mask):
     batch_size, seq_length, _ = x.size()
     x_residual = x.clone()
-    x = self.attention(x, mask=MultiHeadAttention.create_mask(
-        batch_size,
-        seq_length))
+    x = self.attention(x, mask=decoder_mask)
     x = self.dropout_attention(x)
     x = self.add_norm_attention(x + x_residual)
 
     x_residual = x.clone()
     x = self.cross_attention(x,
                              encoder_out, 
-                             mask=MultiHeadCrossAttention.create_mask(
-                                 batch_size,
-                                 seq_length))
+                             mask=encoder_decoder_mask)
     x = self.dropout_cross_attention(x)
     x = self.add_norm_cross_attention(x + x_residual)
 
@@ -47,9 +43,9 @@ class DecoderLayer(nn.Module):
   
 class SequentialDecoder(nn.Sequential):
   def forward(self, *args):
-    x, encoder_out = args
+    x, encoder_out, decoder_mask, encoder_decoder_mask = args
     for module in self._modules.values():
-      x = module(x, encoder_out)
+      x = module(x, encoder_out, decoder_mask, encoder_decoder_mask)
     return x
 
 class StackedDecoder(nn.Module):
@@ -57,5 +53,5 @@ class StackedDecoder(nn.Module):
     super(StackedDecoder, self).__init__()
     self.layers = SequentialDecoder(*[DecoderLayer(inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5) for _ in range(Nx)])
 
-  def forward(self, x, encoder_out):
-    return self.layers(x, encoder_out)
+  def forward(self, x, encoder_out, decoder_mask, encoder_decoder_mask):
+    return self.layers(x, encoder_out, decoder_mask, encoder_decoder_mask)
