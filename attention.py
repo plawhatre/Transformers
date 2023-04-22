@@ -2,13 +2,7 @@ import torch
 import math
 import torch.nn.functional as F
 
-class Attention:
-  @staticmethod
-  def create_mask(batch_size, seq_length):
-    mask = torch.full((batch_size,seq_length, seq_length), -math.inf)
-    mask = torch.triu(mask, diagonal=1)
-    return mask
-    
+class Attention:  
   @staticmethod
   def scaled_dot_product(q, k, v, mask=None):
     d_k= k.size()[-1]
