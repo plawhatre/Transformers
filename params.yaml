@@ -20,4 +20,4 @@ training:
   sent_limit:
     100 # -1 represent no limit
   max_seq_len:
-    60
+    100
