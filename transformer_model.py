@@ -22,6 +22,7 @@ class Transformer(nn.Module):
         self.dst_sent_encode = SentenceEmbedding(batch_size, max_seq_len, d_model, get_dst_vocab)
         self.encoder = StackedEncoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
         self.decoder = StackedDecoder(Nx, inp_dim, d_model, d_hidden, num_heads, p_drop, eps=1e-5)
+        self.linear = nn.Linear(d_model, len(get_dst_vocab))
 
 
     def forward(self, src_lang_sent, dst_lang_sent):
@@ -42,4 +43,5 @@ class Transformer(nn.Module):
         
         x_out = self.encoder(x + x_encoding, encoder_mask)
         out = self.decoder(y + y_encoding, x_out, decoder_mask, encoder_decoder_mask)
+        out = self.linear(out)
         return out
