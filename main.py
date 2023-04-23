@@ -44,7 +44,10 @@ if __name__ == '__main__':
 
     # Dataset
     train_dataset = TextDataset(src_sent, dst_sent, max_seq_len)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(train_dataset, 
+                              batch_size=batch_size, 
+                              shuffle=True, 
+                              drop_last=True)
 
     # Model, Criterion, Optimizer
     model = Transformer(batch_size, max_seq_len, d_model, Nx, 
