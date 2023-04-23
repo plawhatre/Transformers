@@ -3,6 +3,7 @@ from positional_encoding import PositionalEncoding
 from encoder_layer import StackedEncoder
 from decoder_layer import StackedDecoder
 from sentence_embedding import SentenceEmbedding
+import torch.nn.functional as F
 
 
 class Transformer(nn.Module):
@@ -43,5 +44,5 @@ class Transformer(nn.Module):
         
         x_out = self.encoder(x + x_encoding, encoder_mask)
         out = self.decoder(y + y_encoding, x_out, decoder_mask, encoder_decoder_mask)
-        out = self.linear(out)
+        out = F.softmax(self.linear(out), dim=-1)
         return out
