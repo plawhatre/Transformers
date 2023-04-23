@@ -51,7 +51,7 @@ if __name__ == '__main__':
                         inp_dim, d_hidden, num_heads, p_drop, 
                         train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(lr=1e-4, betas=(0.9, 0.98), eps=1e-9)
+    optimizer = optim.Adam(model.parameters() ,lr=1e-4, betas=(0.9, 0.98), eps=1e-9)
 
 
     # Training
@@ -67,4 +67,6 @@ if __name__ == '__main__':
             # forward + backward + optimize
             output = model(src_lang_sent, dst_lang_sent)
             # loss = criterion()
-
+            print(output)
+            break
+        break
