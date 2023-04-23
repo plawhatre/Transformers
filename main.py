@@ -65,8 +65,10 @@ if __name__ == '__main__':
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            output = model(src_lang_sent, dst_lang_sent)
+            output , y = model(src_lang_sent, dst_lang_sent)
+            
             # loss = criterion()
-            print(output)
+            print(output, y)
+            # also me nay have to use binary CE
             break
         break

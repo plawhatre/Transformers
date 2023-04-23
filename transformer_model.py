@@ -27,8 +27,8 @@ class Transformer(nn.Module):
 
     def forward(self, src_lang_sent, dst_lang_sent):
         # Sentence encoding
-        x = self.src_sent_encode(src_lang_sent)
-        y = self.dst_sent_encode(dst_lang_sent)
+        x, _ = self.src_sent_encode(src_lang_sent)
+        y, y_token = self.dst_sent_encode(dst_lang_sent)
 
 
         # positional encoding
@@ -44,4 +44,4 @@ class Transformer(nn.Module):
         x_out = self.encoder(x + x_encoding, encoder_mask)
         out = self.decoder(y + y_encoding, x_out, decoder_mask, encoder_decoder_mask)
         out = self.linear(out)
-        return out
+        return out, y_token

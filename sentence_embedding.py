@@ -28,11 +28,11 @@ class SentenceEmbedding(nn.Module):
         return torch.LongTensor(X)
 
     def forward(self, x):
-        y = self.tokenize(x)
-        y = self.embedding(y)
+        y_token = self.tokenize(x)
+        y = self.embedding(y_token)
         y += self.pos_encoding()
         y = self.dropout(y)
-        return y
+        return y, y_token
     
     def create_encoder_mask(self, batch_src_sent):
         encoder_mask = torch.full((self.batch_size,self.max_seq_len, self.max_seq_len), 
