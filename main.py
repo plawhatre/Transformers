@@ -24,6 +24,10 @@ if __name__ == '__main__':
     lang = str(params['training']['lang'])
     sent_limit = params['training']['sent_limit']
     max_seq_len = params['training']['max_seq_len']
+    lr = float(params['training']['lr'])
+    beta1 = params['training']['beta1']
+    beta2 = params['training']['beta2']
+    eps = float(params['training']['eps'])
 
     # Load data
     src_folder = glob(f"data/v2/*{lang}/*en")[0]
@@ -54,7 +58,7 @@ if __name__ == '__main__':
                         inp_dim, d_hidden, num_heads, p_drop, 
                         train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters() ,lr=1e-4, betas=(0.9, 0.98), eps=1e-9)
+    optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
 
 
     # Training
