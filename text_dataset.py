@@ -31,8 +31,11 @@ class TextDataset(Dataset):
                     vocab[word] = unique_id
                     unique_id += 1
 
+        vocab['UNKN'] = unique_id
+
         if end_token:
-            vocab['END'] = unique_id
+            vocab['END'] = unique_id + 1
+
             
         return vocab
 
