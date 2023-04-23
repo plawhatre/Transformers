@@ -68,7 +68,9 @@ if __name__ == '__main__':
             output , y = model(src_lang_sent, dst_lang_sent)
             
             # loss = criterion()
-            print(output, y)
+            print(f"{output.shape = }, {y.shape =}")
+            print(f"{output = }")
+            print(f"{y =}")
             # also me nay have to use binary CE
             break
         break
