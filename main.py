@@ -1,9 +1,11 @@
+import os
 import yaml
 from glob import glob
 
 from torch.utils.data import DataLoader
 from text_dataset import TextDataset
 from transformer_model import Transformer
+import torch
 import torch.optim as optim
 import torch.nn as nn
 
@@ -28,63 +30,82 @@ if __name__ == '__main__':
     beta1 = params['training']['beta1']
     beta2 = params['training']['beta2']
     eps = float(params['training']['eps'])
+    training_flag = params['training']['flag']
+    save_model = params['training']['save_model']
 
-    # Load data
-    src_folder = glob(f"data/v2/*{lang}/*en")[0]
-    dst_folder = glob(f"data/v2/*{lang}/*{lang}")[0]
+    inference_flag = params['inference']['flag']
 
-    with open(src_folder, 'r') as f:
-        src_sent = f.readlines() 
+    if training_flag:
+        # Load data
+        src_folder = glob(f"data/v2/*{lang}/*en")[0]
+        dst_folder = glob(f"data/v2/*{lang}/*{lang}")[0]
 
-    with open(dst_folder, 'r') as f:
-        dst_sent = f.readlines() 
+        with open(src_folder, 'r') as f:
+            src_sent = f.readlines() 
 
-
-    src_sent = src_sent[:sent_limit]
-    dst_sent = dst_sent[:sent_limit]
-
-    src_sent = [sent.strip('\n') for sent in src_sent]
-    dst_sent = [sent.strip('\n') for sent in dst_sent]
-
-    # Dataset
-    train_dataset = TextDataset(src_sent, dst_sent, max_seq_len)
-    train_loader = DataLoader(train_dataset, 
-                              batch_size=batch_size, 
-                              shuffle=True, 
-                              drop_last=True)
-
-    # Model, Criterion, Optimizer
-    model = Transformer(batch_size, max_seq_len, d_model, Nx, 
-                        inp_dim, d_hidden, num_heads, p_drop, 
-                        train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
+        with open(dst_folder, 'r') as f:
+            dst_sent = f.readlines() 
 
 
-    # Training
-    for epoch in range(epochs):
-        running_loss = 0.0
-        for iteration, data in enumerate(train_loader, 0):
-            # fecthing the batch sample
-            src_lang_sent, dst_lang_sent = data
+        src_sent = src_sent[:sent_limit]
+        dst_sent = dst_sent[:sent_limit]
 
-            # setting grads to zero
-            optimizer.zero_grad()
+        src_sent = [sent.strip('\n') for sent in src_sent]
+        dst_sent = [sent.strip('\n') for sent in dst_sent]
 
-            # forward 
-            output , y_true = model(src_lang_sent, dst_lang_sent)
-            
-            # backward
-            loss = criterion(output, y_true.float())
-            loss.backward()
+        # Dataset
+        train_dataset = TextDataset(src_sent, dst_sent, max_seq_len)
+        train_loader = DataLoader(train_dataset, 
+                                batch_size=batch_size, 
+                                shuffle=True, 
+                                drop_last=True)
 
-            #  Update params
-            optimizer.step()
-            
-            # stats during training
-            running_loss += loss.item()
-            if iteration % 5 == 0:
-                print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
-                running_loss = 0.0
+        # Model, Criterion, Optimizer
+        model = Transformer(batch_size, max_seq_len, d_model, Nx, 
+                            inp_dim, d_hidden, num_heads, p_drop, 
+                            train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
+        criterion = nn.BCEWithLogitsLoss()
+        optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
 
-    print("Training Finished")
+
+        # Training
+        for epoch in range(epochs):
+            running_loss = 0.0
+            for iteration, data in enumerate(train_loader, 0):
+                # fecthing the batch sample
+                src_lang_sent, dst_lang_sent = data
+
+                # setting grads to zero
+                optimizer.zero_grad()
+
+                # forward 
+                output , y_true = model(src_lang_sent, dst_lang_sent)
+                
+                # backward
+                loss = criterion(output, y_true.float())
+                loss.backward()
+
+                #  Update params
+                optimizer.step()
+                
+                # stats during training
+                running_loss += loss.item()
+                if iteration % 5 == 0:
+                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
+                    running_loss = 0.0
+
+        print("Training Finished")
+
+        if not os.path.exists('./model'):
+            os.mkdir('./model')
+
+        torch.save(model.state_dict(), './model/nmt.pt')
+
+    # Translate
+    if inference_flag:
+        model = Transformer(batch_size, max_seq_len, d_model, Nx, 
+                            inp_dim, d_hidden, num_heads, p_drop, 
+                            train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
+
+        model.load_state_dict(torch.load('./model/nmt.pt'))
+        model.eval()

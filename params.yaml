@@ -13,6 +13,10 @@ global:
     6
     
 training:
+  flag:
+    true
+  save_model:
+    true
   batch_size:
     3
   epochs:
@@ -24,10 +28,14 @@ training:
   max_seq_len:
     100
   lr:
-    1e-6
+    1e-4
   beta1:
     0.9
   beta2:
     0.98
   eps:
     1e-9
+
+inference:
+  flag:
+    true
