@@ -50,27 +50,34 @@ if __name__ == '__main__':
     model = Transformer(batch_size, max_seq_len, d_model, Nx, 
                         inp_dim, d_hidden, num_heads, p_drop, 
                         train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters() ,lr=1e-4, betas=(0.9, 0.98), eps=1e-9)
 
 
     # Training
     for epoch in range(epochs):
         running_loss = 0.0
-        for i, data in enumerate(train_loader, 0):
+        for iteration, data in enumerate(train_loader, 0):
             # fecthing the batch sample
             src_lang_sent, dst_lang_sent = data
 
             # setting grads to zero
             optimizer.zero_grad()
 
-            # forward + backward + optimize
-            output , y = model(src_lang_sent, dst_lang_sent)
+            # forward 
+            output , y_true = model(src_lang_sent, dst_lang_sent)
             
-            # loss = criterion()
-            print(f"{output.shape = }, {y.shape =}")
-            print(f"{output = }")
-            print(f"{y =}")
-            # also me nay have to use binary CE
-            break
-        break
+            # backward
+            loss = criterion(output, y_true.float())
+            loss.backward()
+
+            #  Update params
+            optimizer.step()
+            
+            # stats during training
+            running_loss += loss.item()
+            if iteration % 5 == 0:
+                print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
+                running_loss = 0.0
+
+    print("Training Finished")
