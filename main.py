@@ -4,6 +4,7 @@ from glob import glob
 from torch.utils.data import DataLoader
 from text_dataset import TextDataset
 from transformer_model import Transformer
+import torch.optim as optim
 
 if __name__ == '__main__':
     # Read yaml file and load params
