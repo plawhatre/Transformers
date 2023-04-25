@@ -30,10 +30,12 @@ class Transformer(nn.Module):
 
 
     def forward(self, src_lang_sent, dst_lang_sent):
+        # Add START and END token
+        dst_lang_sent = self.dst_sent_encode.add_start_end_token(dst_lang_sent)
+
         # Sentence encoding
         x, _ = self.src_sent_encode(src_lang_sent)
         y, y_token = self.dst_sent_encode(dst_lang_sent)
-
 
         # positional encoding
         x_encoding = PositionalEncoding(*x.shape)()
@@ -50,8 +52,10 @@ class Transformer(nn.Module):
         out = self.linear(out)
 
         # true translation for loss computation
-        y_onehot_padded = F.one_hot(y_token, num_classes=len(self.dst_vocab))
+        token_mask = (y_token!=0) * 1
         ignore_padding_mask = (y_token == 0)
+        
+        y_onehot_padded = F.one_hot(y_token - token_mask, num_classes=len(self.dst_vocab)) 
         y_onehot = torch.where(ignore_padding_mask.unsqueeze(-1), 
                                torch.zeros_like(y_onehot_padded), 
                                y_onehot_padded)

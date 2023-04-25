@@ -11,7 +11,7 @@ class SentenceEmbedding(nn.Module):
         self.batch_size = batch_size
         self.vocab_size = len(vocab)
         self.max_seq_len = max_seq_len
-        self.embedding = nn.Embedding(self.vocab_size, d_model)
+        self.embedding = nn.Embedding(self.vocab_size + 1, d_model, padding_idx=0)
         self.pos_encoding = PositionalEncoding(batch_size, max_seq_len, d_model)
         self.dropout = nn.Dropout(p=0.1)
 
@@ -26,6 +26,13 @@ class SentenceEmbedding(nn.Module):
             
             X.append(idx_sent)
         return torch.LongTensor(X)
+    
+    @staticmethod
+    def add_start_end_token(batch_sent):
+        added_tokens_sent = ()
+        for idx, sent in enumerate(batch_sent):
+            added_tokens_sent += ("START " + sent + " END",)
+        return added_tokens_sent
 
     def forward(self, x):
         y_token = self.tokenize(x)

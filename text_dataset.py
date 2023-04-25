@@ -35,7 +35,6 @@ class TextDataset(Dataset):
 
         if end_token:
             vocab['END'] = unique_id + 1
-
             
         return vocab
 
