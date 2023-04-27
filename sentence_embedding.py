@@ -9,9 +9,9 @@ class SentenceEmbedding(nn.Module):
         super().__init__()
         self.vocab = vocab
         self.batch_size = batch_size
-        self.vocab_size = len(vocab)
+        self.vocab_size = len(vocab) + 1
         self.max_seq_len = max_seq_len
-        self.embedding = nn.Embedding(self.vocab_size + 1, d_model, padding_idx=0)
+        self.embedding = nn.Embedding(self.vocab_size, d_model, padding_idx=0)
         self.pos_encoding = PositionalEncoding(batch_size, max_seq_len, d_model)
         self.dropout = nn.Dropout(p=0.1)
 
