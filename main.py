@@ -32,8 +32,11 @@ if __name__ == '__main__':
     eps = float(params['training']['eps'])
     training_flag = params['training']['flag']
     save_model = params['training']['save_model']
+    save_path = params['training']['save_path']
 
     inference_flag = params['inference']['flag']
+    load_path = params['inference']['load_path']
+
 
     if training_flag:
         # Load data
@@ -66,7 +69,7 @@ if __name__ == '__main__':
                             train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
         criterion = nn.BCEWithLogitsLoss()
         optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
-
+       
 
         # Training
         for epoch in range(epochs):
@@ -94,18 +97,14 @@ if __name__ == '__main__':
                     print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
                     running_loss = 0.0
 
+                break
+            break
+
         print("Training Finished")
 
-        if not os.path.exists('./model'):
-            os.mkdir('./model')
-
-        torch.save(model.state_dict(), './model/nmt.pt')
+        model.save_model(save_path)
 
     # Translate
     if inference_flag:
-        model = Transformer(batch_size, max_seq_len, d_model, Nx, 
-                            inp_dim, d_hidden, num_heads, p_drop, 
-                            train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
-
-        model.load_state_dict(torch.load('./model/nmt.pt'))
-        model.eval()
+        model = Transformer.load_model(load_path)
+        print(model.translate(["The court has fixed a hearing for February 12"]))
