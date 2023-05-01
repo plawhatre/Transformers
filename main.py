@@ -97,9 +97,6 @@ if __name__ == '__main__':
                     print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
                     running_loss = 0.0
 
-                break
-            break
-
         print("Training Finished")
 
         model.save_model(save_path)
@@ -107,4 +104,6 @@ if __name__ == '__main__':
     # Translate
     if inference_flag:
         model = Transformer.load_model(load_path)
-        print(model.translate(["The court has fixed a hearing for February 12", "fixed a hearing"]))
+        translated_out = model.translate(["The court has fixed a hearing for February 12", "fixed a hearing"])
+        for sentence in translated_out:
+            print(sentence)
