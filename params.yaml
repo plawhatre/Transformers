@@ -10,7 +10,7 @@ global:
   p_drop:
     0.1 
   Nx:
-    6
+    1
     
 training:
   flag:
@@ -18,17 +18,17 @@ training:
   save_model:
     true
   batch_size:
-    3
+    64
   epochs:
     2
   lang:
     "mr"
   sent_limit:
-    100 # -1 represent no limit
+    2000000 # -use wc -l loc/to/data/file and then decide on number
   max_seq_len:
     200
   lr:
-    1e-4
+    1e-3
   beta1:
     0.9
   beta2:
