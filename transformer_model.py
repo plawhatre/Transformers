@@ -69,7 +69,14 @@ class Transformer(nn.Module):
         return out, y_onehot
     
     def translate(self, src_lang_sent):
-        src_lang_sent = src_lang_sent * self.src_sent_encode.batch_size
+        inference_batch_size = len(src_lang_sent)
+        self.src_sent_encode.batch_size = inference_batch_size
+        self.src_sent_encode.pos_encoding.batch_size = inference_batch_size
+        self.dst_sent_encode.batch_size = inference_batch_size
+        self.dst_sent_encode.pos_encoding.batch_size = inference_batch_size
+        vocab_keys = list(self.dst_vocab.keys())
+        vocab_values = list(self.dst_vocab.values())
+
         # Sentence encoding
         x, _ = self.src_sent_encode(src_lang_sent)
         # masking
@@ -91,17 +98,22 @@ class Transformer(nn.Module):
             out = F.softmax(self.linear(out), dim=-1)
 
             next_token_ind = torch.max(out[:,i, :], axis=-1).indices.numpy().tolist()
-            vocab_keys = list(self.dst_vocab.keys())
-            vocab_values = list(self.dst_vocab.values())
+            next_token_lst = ['placeholder', 'placeholder']
 
             for idx, sent in enumerate(dst_lang_sent): 
-                next_token = vocab_keys[vocab_values.index(next_token_ind[idx])]
-                dst_lang_sent[idx] = sent + next_token + " "
+                if next_token_lst[idx] == 'STOP':
+                    continue
+                else:
+                    next_token = vocab_keys[vocab_values.index(next_token_ind[idx])]
+                    next_token_lst[idx] = next_token
+                    dst_lang_sent[idx] = sent + next_token + " "
 
-            if next_token == 'STOP' or i >= (out.shape[1] - 1):
+            terminate_loop = all(last_token == 'STOP' for last_token in next_token_lst)
+
+            if terminate_loop or i >= (out.shape[1] - 1):
                 break
 
-        return dst_lang_sent[0]
+        return dst_lang_sent
             
 
     def save_model(self, path='./model'):
