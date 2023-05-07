@@ -111,7 +111,7 @@ if __name__ == '__main__':
                         [vocab_keys[val] for val in [vocab_values.index(word) 
                             for word in pred_sent]]
                         )
-                    print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", src_lang_sent[index_sent])
+                    print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", dst_lang_sent[index_sent])
                     print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
 
         print("Training Finished")
