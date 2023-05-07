@@ -76,8 +76,8 @@ class Transformer(nn.Module):
             [vocab_keys[val] for val in [vocab_values.index(word) 
                 for word in pred_sent]]
             )
-        print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", '\x1B[32m',dst_lang_sent[index_sent], '\x1B[0m')
-        print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
+        print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", '\x1B[32m', dst_lang_sent[index_sent], '\x1B[0m')
+        print("--"*5 + "PREDICTED" + "--"*5 ,"\n", '\x1B[36m', pred_train_sample, '\x1B[0m')
     
     def translate(self, src_lang_sent):
         inference_batch_size = len(src_lang_sent)
