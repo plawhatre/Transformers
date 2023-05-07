@@ -120,7 +120,8 @@ if __name__ == '__main__':
         model = Transformer.load_model(load_path)
 
         translate_sent = ["The court has fixed a hearing for February 12",
-             "fixed a hearing"]
+             "Please select the position where the track should be",
+             "Joseph dreamed a dream, and he told it to his"]
 
         translated_out = model.translate(translate_sent)
         for sentence in translated_out:
