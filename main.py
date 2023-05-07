@@ -129,5 +129,8 @@ if __name__ == '__main__':
 
         print("\x1B[35mTranslating input text\x1B[0m")
         translated_out = model.translate(translate_sent)
-        for sentence in translated_out:
-            print(f"\x1B[32m{sentence}\x1B[0m")
+        for idx, sentence in enumerate(translated_out):
+            if idx %2 == 0:
+                print(f"\x1B[32m{sentence}\x1B[0m")
+            else:
+                print(f"\x1B[36m{sentence}\x1B[0m")
