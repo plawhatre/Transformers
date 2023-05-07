@@ -68,6 +68,16 @@ class Transformer(nn.Module):
                                y_onehot_padded)
         return out, y_onehot
     
+    def train_time_inference(self, index_sent, dst_lang_sent, output, vocab_keys, vocab_values):
+        pred_sent = F.softmax(output[index_sent], dim =-1)
+        pred_sent = (torch.max(pred_sent, axis=-1).indices.numpy() + 1).tolist()
+        pred_train_sample = " ".join(
+            [vocab_keys[val] for val in [vocab_values.index(word) 
+                for word in pred_sent]]
+            )
+        print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", dst_lang_sent[index_sent])
+        print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
+    
     def translate(self, src_lang_sent):
         inference_batch_size = len(src_lang_sent)
         self.src_sent_encode.batch_size = inference_batch_size
