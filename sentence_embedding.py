@@ -23,10 +23,13 @@ class SentenceEmbedding(nn.Module):
             len_sent = len(idx_sent)
             if  len_sent < self.max_seq_len:
                 idx_sent = idx_sent + [0]*(self.max_seq_len - len_sent)
+            else:
+                idx_sent = idx_sent[:self.max_seq_len]
             
             X.append(idx_sent)
+
         return torch.LongTensor(X)
-    
+        
     @staticmethod
     def add_start_end_token(batch_sent):
         added_tokens_sent = ()
