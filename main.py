@@ -104,7 +104,7 @@ if __name__ == '__main__':
                     running_loss = 0.0 
 
                     # preds 
-                    index_sent = randint(0, len(src_lang_sent))
+                    index_sent = randint(0, len(src_lang_sent) - 1)
                     pred_sent = F.softmax(output[index_sent], dim =-1)
                     pred_sent = (torch.max(pred_sent, axis=-1).indices.numpy() + 1).tolist()
                     pred_train_sample = " ".join(
