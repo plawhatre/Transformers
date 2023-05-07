@@ -1,11 +1,13 @@
 import os
 import yaml
 from glob import glob
+from random import randint
 
 from torch.utils.data import DataLoader
 from text_dataset import TextDataset
 from transformer_model import Transformer
 import torch
+import torch.nn.functional as F
 import torch.optim as optim
 import torch.nn as nn
 
@@ -69,7 +71,10 @@ if __name__ == '__main__':
                             train_dataset.get_src_vocab, train_dataset.get_dst_vocab)
         criterion = nn.BCEWithLogitsLoss()
         optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
-       
+
+        # Dict keys and vals
+        vocab_keys = list(model.dst_vocab.keys())
+        vocab_values = list(model.dst_vocab.values())
 
         # Training
         for epoch in range(epochs):
@@ -93,9 +98,20 @@ if __name__ == '__main__':
                 
                 # stats during training
                 running_loss += loss.item()
-                if iteration % 5 == 0:
-                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/10}")
-                    running_loss = 0.0
+                if iteration % 5 == 4:
+                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/5}")
+                    running_loss = 0.0 
+
+                    # preds 
+                    index_sent = randint(0, len(src_lang_sent))
+                    pred_sent = F.softmax(output[index_sent], dim =-1)
+                    pred_sent = torch.max(pred_sent, axis=-1).indices.numpy().tolist()
+                    pred_train_sample = " ".join(
+                        [vocab_keys[val] for val in [vocab_values.index(word) 
+                            for word in pred_sent]]
+                        )
+                    print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", src_lang_sent[index_sent])
+                    print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
 
         print("Training Finished")
 
