@@ -73,50 +73,14 @@ if __name__ == '__main__':
         criterion = nn.BCEWithLogitsLoss()
         optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
 
-        # Dict keys and vals
-        vocab_keys = list(model.dst_vocab.keys())
-        vocab_values = list(model.dst_vocab.values())
-
-        print("\x1B[34mStarting training\x1B[0m")
-
         # Training
-        for epoch in range(epochs):
-            running_loss = 0.0
-            for iteration, data in enumerate(train_loader, 0):
-                # fecthing the batch sample
-                src_lang_sent, dst_lang_sent = data
+        print("\x1B[34mStarting training\x1B[0m")
+        num_epoch = model.train(epochs, train_loader, optimizer, criterion)
+        print("\x1B[32mTraining Finished\x1B[0m")
 
-                # setting grads to zero
-                optimizer.zero_grad()
-
-                # forward 
-                output , y_true = model(src_lang_sent, dst_lang_sent)
-                
-                # backward
-                loss = criterion(output, y_true.float())
-                loss.backward()
-
-                #  Update params
-                optimizer.step()
-                
-                # stats during training
-                running_loss += loss.item()
-                num_print_after_iter = 10
-                if iteration % num_print_after_iter == (num_print_after_iter - 1):
-                    print(f"\x1B[35m[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/num_print_after_iter}\x1B[0m")
-                    running_loss = 0.0 
-
-                    # preds 
-                    index_sent = randint(0, len(src_lang_sent) - 1)
-                    model.train_time_inference(index_sent, 
-                                         dst_lang_sent, 
-                                         output, 
-                                         vocab_keys, 
-                                         vocab_values)
-        print("\x1B[36mTraining Finished\x1B[0m")
-
+        # Save model
         save_model_name = 'final_model'        
-        model.create_checkpoint(epoch, optimizer, save_path, save_model_name)
+        model.create_checkpoint(num_epoch, optimizer, save_path, save_model_name)
         print(f"\x1B[33mModel saved at {save_path}\x1B[0m")
 
     # Translate

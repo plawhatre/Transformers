@@ -1,3 +1,4 @@
+from random import randint
 import torch.nn as nn
 from positional_encoding import PositionalEncoding
 from encoder_layer import StackedEncoder
@@ -153,7 +154,45 @@ class Transformer(nn.Module):
         epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        model.eval()
-
         return model, optimizer, epoch
         
+    def train(self, epochs, train_loader, optimizer, criterion):
+        # Dict keys and vals
+        vocab_keys = list(self.dst_vocab.keys())
+        vocab_values = list(self.dst_vocab.values())
+
+        for epoch in range(epochs):
+            running_loss = 0.0
+            for iteration, data in enumerate(train_loader, 0):
+                # fecthing the batch sample
+                src_lang_sent, dst_lang_sent = data
+
+                # setting grads to zero
+                optimizer.zero_grad()
+
+                # forward 
+                output , y_true = self(src_lang_sent, dst_lang_sent)
+                
+                # backward
+                loss = criterion(output, y_true.float())
+                loss.backward()
+
+                #  Update params
+                optimizer.step()
+                
+                # stats during training
+                running_loss += loss.item()
+                num_print_after_iter = 10
+                if iteration % num_print_after_iter == (num_print_after_iter - 1):
+                    print(f"\x1B[35m[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/num_print_after_iter}\x1B[0m")
+                    running_loss = 0.0 
+
+                    # preds 
+                    index_sent = randint(0, len(src_lang_sent) - 1)
+                    self.train_time_inference(index_sent, 
+                                         dst_lang_sent, 
+                                         output, 
+                                         vocab_keys, 
+                                         vocab_values)
+        return epoch
+
