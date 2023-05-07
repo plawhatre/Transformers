@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
         translate_sent = ["The court has fixed a hearing for February 12",
              "Please select the position where the track should be",
-             "Joseph dreamed a dream, and he told it to his"]
+             "Joseph dreamed a dream, and he told it to his brothers"]
 
         translated_out = model.translate(translate_sent)
         for sentence in translated_out:
