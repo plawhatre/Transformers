@@ -35,9 +35,15 @@ if __name__ == '__main__':
     training_flag = params['training']['flag']
     save_model = params['training']['save_model']
     save_path = params['training']['save_path']
-
+    
+    save_model_name = params['training']['save_model_name']
+    train_from_checkpoint_flag = params['training']['train_from_checkpoint_flag']
+    checkpoint_filename_for_tranining = params['training']['checkpoint_filename_for_tranining']
+    checkpoint_interval = params['training']['checkpoint_interval']
+    
     inference_flag = params['inference']['flag']
     load_path = params['inference']['load_path']
+    checkpoint_filename = params['inference']['checkpoint_filename']
 
     print("\x1B[33mParams loaded\x1B[0m")
 
@@ -73,15 +79,9 @@ if __name__ == '__main__':
         criterion = nn.BCEWithLogitsLoss()
         optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
 
-        # Add in params
-        save_model_name = 'final_model'
-        train_from_checkpoint = True
-        checkpoint_filename = 'final_model' # checkpoint_***
-        checkpoint_interval = 10
-
         # Training
         print("\x1B[34mStarting training\x1B[0m")
-        if not train_from_checkpoint:
+        if not train_from_checkpoint_flag:
             checkpoint_epochs = 0
         else:
             model, optimizer, checkpoint_epochs = Transformer.load_checkpoint(load_path, 
@@ -102,7 +102,6 @@ if __name__ == '__main__':
 
     # Translate
     if inference_flag:
-        checkpoint_filename = 'final_model'
         model, _, _ = Transformer.load_checkpoint(load_path, checkpoint_filename)
         print(f"\x1B[34mModel loaded from {load_path}\x1B[0m")
 

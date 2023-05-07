@@ -15,31 +15,41 @@ global:
 training:
   flag:
     true
-  save_model:
-    true
+  train_from_checkpoint_flag:
+    false
   batch_size:
-    64
+    3
   epochs:
     2
   lang:
     "mr"
   sent_limit:
-    2000000 # -use wc -l loc/to/data/file and then decide on number
+    100 # -use wc -l loc/to/data/file and then decide on number
   max_seq_len:
-    200
+    150
   lr:
-    1e-3
+    1e-5
   beta1:
     0.9
   beta2:
     0.98
   eps:
     1e-9
+  save_model:
+    true
   save_path:
     './model'
+  save_model_name:
+    'final_model'
+  checkpoint_filename_for_tranining:
+    'final_model'
+  checkpoint_interval:
+    500
 
 inference:
   flag:
     true
   load_path:
     './model'
+  checkpoint_filename:
+    'final_model'
