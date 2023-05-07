@@ -105,14 +105,11 @@ if __name__ == '__main__':
 
                     # preds 
                     index_sent = randint(0, len(src_lang_sent) - 1)
-                    pred_sent = F.softmax(output[index_sent], dim =-1)
-                    pred_sent = (torch.max(pred_sent, axis=-1).indices.numpy() + 1).tolist()
-                    pred_train_sample = " ".join(
-                        [vocab_keys[val] for val in [vocab_values.index(word) 
-                            for word in pred_sent]]
-                        )
-                    print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", dst_lang_sent[index_sent])
-                    print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
+                    model.train_time_inference(index_sent, 
+                                         dst_lang_sent, 
+                                         output, 
+                                         vocab_keys, 
+                                         vocab_values)
 
         print("Training Finished")
 
