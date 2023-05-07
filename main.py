@@ -118,7 +118,10 @@ if __name__ == '__main__':
     # Translate
     if inference_flag:
         model = Transformer.load_model(load_path)
-        translated_out = model.translate(["The court has fixed a hearing for February 12", 
-                                          "fixed a hearing"])
+
+        translate_sent = ["The court has fixed a hearing for February 12",
+             "fixed a hearing"]
+
+        translated_out = model.translate(translate_sent)
         for sentence in translated_out:
             print(sentence)
