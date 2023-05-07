@@ -97,7 +97,7 @@ class Transformer(nn.Module):
             out = self.decoder(y , x_out, decoder_mask, encoder_decoder_mask)
             out = F.softmax(self.linear(out), dim=-1)
 
-            next_token_ind = torch.max(out[:,i, :], axis=-1).indices.numpy().tolist()
+            next_token_ind = (torch.max(out[:,i, :], axis=-1).indices.numpy() + 1).tolist()
             next_token_lst = ['placeholder', 'placeholder']
 
             for idx, sent in enumerate(dst_lang_sent): 

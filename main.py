@@ -106,7 +106,7 @@ if __name__ == '__main__':
                     # preds 
                     index_sent = randint(0, len(src_lang_sent))
                     pred_sent = F.softmax(output[index_sent], dim =-1)
-                    pred_sent = torch.max(pred_sent, axis=-1).indices.numpy().tolist()
+                    pred_sent = (torch.max(pred_sent, axis=-1).indices.numpy() + 1).tolist()
                     pred_train_sample = " ".join(
                         [vocab_keys[val] for val in [vocab_values.index(word) 
                             for word in pred_sent]]
