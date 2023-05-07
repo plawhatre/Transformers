@@ -98,8 +98,9 @@ if __name__ == '__main__':
                 
                 # stats during training
                 running_loss += loss.item()
-                if iteration % 5 == 4:
-                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/5}")
+                num_print_after_iter = 10
+                if iteration % num_print_after_iter == (num_print_after_iter - 1):
+                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/num_print_after_iter}")
                     running_loss = 0.0 
 
                     # preds 
