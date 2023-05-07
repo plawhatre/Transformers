@@ -18,7 +18,7 @@ class SentenceEmbedding(nn.Module):
     def tokenize(self, batch_sent):
         X = []
         for sent in batch_sent:
-            idx_sent = [self.vocab[word] for word in sent.split()]
+            idx_sent = [self.vocab.get(word, self.vocab["UNKN"]) for word in sent.split()]
         
             len_sent = len(idx_sent)
             if  len_sent < self.max_seq_len:
