@@ -38,7 +38,7 @@ if __name__ == '__main__':
     
     save_model_name = params['training']['save_model_name']
     train_from_checkpoint_flag = params['training']['train_from_checkpoint_flag']
-    checkpoint_filename_for_tranining = params['training']['checkpoint_filename_for_tranining']
+    checkpoint_filename_for_training = params['training']['checkpoint_filename_for_training']
     checkpoint_interval = params['training']['checkpoint_interval']
     
     inference_flag = params['inference']['flag']

@@ -16,7 +16,7 @@ training:
   flag:
     true
   train_from_checkpoint_flag:
-    false
+    true
   batch_size:
     3
   epochs:
@@ -41,7 +41,7 @@ training:
     './model'
   save_model_name:
     'final_model'
-  checkpoint_filename_for_tranining:
+  checkpoint_filename_for_training:
     'final_model'
   checkpoint_interval:
     500
