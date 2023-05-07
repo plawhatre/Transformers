@@ -86,6 +86,7 @@ class Transformer(nn.Module):
         
         i = 0
         dst_lang_sent = ["START "] * self.src_sent_encode.batch_size
+        next_token_lst = ['placeholder'] * inference_batch_size
 
         while True:
             i += 1
@@ -98,17 +99,16 @@ class Transformer(nn.Module):
             out = F.softmax(self.linear(out), dim=-1)
 
             next_token_ind = (torch.max(out[:,i, :], axis=-1).indices.numpy() + 1).tolist()
-            next_token_lst = ['placeholder', 'placeholder']
 
             for idx, sent in enumerate(dst_lang_sent): 
-                if next_token_lst[idx] == 'STOP':
+                if next_token_lst[idx] == 'END':
                     continue
                 else:
                     next_token = vocab_keys[vocab_values.index(next_token_ind[idx])]
                     next_token_lst[idx] = next_token
                     dst_lang_sent[idx] = sent + next_token + " "
 
-            terminate_loop = all(last_token == 'STOP' for last_token in next_token_lst)
+            terminate_loop = all(last_token == 'END' for last_token in next_token_lst)
 
             if terminate_loop or i >= (out.shape[1] - 1):
                 break
