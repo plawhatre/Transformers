@@ -73,20 +73,37 @@ if __name__ == '__main__':
         criterion = nn.BCEWithLogitsLoss()
         optimizer = optim.Adam(model.parameters() ,lr=lr, betas=(beta1, beta2), eps=eps)
 
+        # Add in params
+        save_model_name = 'final_model'
+        train_from_checkpoint = True
+        checkpoint_filename = 'final_model' # checkpoint_***
+        checkpoint_interval = 10
+
         # Training
         print("\x1B[34mStarting training\x1B[0m")
-        num_epoch = model.train(epochs, train_loader, optimizer, criterion)
+        if not train_from_checkpoint:
+            checkpoint_epochs = 0
+        else:
+            model, optimizer, checkpoint_epochs = Transformer.load_checkpoint(load_path, 
+                                                                              checkpoint_filename)
+        num_epoch = model.train(checkpoint_epochs, 
+                                epochs, 
+                                train_loader, 
+                                optimizer, 
+                                criterion,
+                                checkpoint_interval,
+                                save_path)
         print("\x1B[32mTraining Finished\x1B[0m")
 
+
         # Save model
-        save_model_name = 'final_model'        
         model.create_checkpoint(num_epoch, optimizer, save_path, save_model_name)
         print(f"\x1B[33mModel saved at {save_path}\x1B[0m")
 
     # Translate
     if inference_flag:
-        saved_model_name = 'final_model'
-        model, _, _ = Transformer.load_checkpoint(load_path, saved_model_name)
+        checkpoint_filename = 'final_model'
+        model, _, _ = Transformer.load_checkpoint(load_path, checkpoint_filename)
         print(f"\x1B[34mModel loaded from {load_path}\x1B[0m")
 
         translate_sent = ["The court has fixed a hearing for February 12",

@@ -143,6 +143,7 @@ class Transformer(nn.Module):
         
         torch.save(self.params, f"{path}/model_attributes.pt")
         torch.save(checkpoint, f"{path}/{filename}.pt")
+        print(f"\x1B[31mCreated checkpoint {filename}\x1B[0m")
 
     @staticmethod
     def load_checkpoint(path='./model', filename='final_model'):
@@ -154,14 +155,22 @@ class Transformer(nn.Module):
         epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        print(f"\x1B[31mLoading checkpoint {filename}\x1B[0m")
         return model, optimizer, epoch
         
-    def train(self, epochs, train_loader, optimizer, criterion):
+    def train(self, 
+              start_epoch, 
+              epochs, 
+              train_loader, 
+              optimizer, 
+              criterion, 
+              checkpoint_interval,
+              save_path):
         # Dict keys and vals
         vocab_keys = list(self.dst_vocab.keys())
         vocab_values = list(self.dst_vocab.values())
 
-        for epoch in range(epochs):
+        for epoch in range(start_epoch, epochs):
             running_loss = 0.0
             for iteration, data in enumerate(train_loader, 0):
                 # fecthing the batch sample
@@ -194,5 +203,9 @@ class Transformer(nn.Module):
                                          output, 
                                          vocab_keys, 
                                          vocab_values)
+                    
+                if iteration % checkpoint_interval == (checkpoint_interval - 1):
+                    self.create_checkpoint(epoch, optimizer, path=save_path, filename=None)
+
         return epoch
 
