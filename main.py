@@ -39,6 +39,7 @@ if __name__ == '__main__':
     inference_flag = params['inference']['flag']
     load_path = params['inference']['load_path']
 
+    print("\x1B[33mParams loaded\x1B[0m")
 
     if training_flag:
         # Load data
@@ -76,6 +77,8 @@ if __name__ == '__main__':
         vocab_keys = list(model.dst_vocab.keys())
         vocab_values = list(model.dst_vocab.values())
 
+        print("\x1B[34mStarting training\x1B[0m")
+
         # Training
         for epoch in range(epochs):
             running_loss = 0.0
@@ -100,7 +103,7 @@ if __name__ == '__main__':
                 running_loss += loss.item()
                 num_print_after_iter = 10
                 if iteration % num_print_after_iter == (num_print_after_iter - 1):
-                    print(f"[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/num_print_after_iter}")
+                    print(f"\x1B[35m[Epoch: {epoch}, Iteration: {iteration}], Loss: {running_loss/num_print_after_iter}\x1B[0m")
                     running_loss = 0.0 
 
                     # preds 
@@ -110,19 +113,21 @@ if __name__ == '__main__':
                                          output, 
                                          vocab_keys, 
                                          vocab_values)
-
-        print("Training Finished")
-
+        print("\x1B[36mTraining Finished\x1B[0m")
+        
         model.save_model(save_path)
+        print(f"\x1B[33mModel saved at {save_path}\x1B[0m")
 
     # Translate
     if inference_flag:
         model = Transformer.load_model(load_path)
+        print(f"\x1B[34mModel loaded from {load_path}\x1B[0m")
 
         translate_sent = ["The court has fixed a hearing for February 12",
              "Please select the position where the track should be",
              "Joseph dreamed a dream, and he told it to his brothers"]
 
+        print("\x1B[35mTranslating input text\x1B[0m")
         translated_out = model.translate(translate_sent)
         for sentence in translated_out:
-            print(sentence)
+            print(f"\x1B[32m{sentence}\x1B[0m")

@@ -7,6 +7,7 @@ class TextDataset(Dataset):
         self.max_sent_length = max_sent_length
         self.start_token = start_token
         self.end_token = end_token
+        print("\x1B[32mDataset created\x1B[0m")
 
     @property
     def get_src_vocab(self):

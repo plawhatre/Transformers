@@ -38,6 +38,7 @@ class Transformer(nn.Module):
                         'p_drop': p_drop,
                         'src_vocab': src_vocab,
                         'dst_vocab': dst_vocab}
+        print("\x1B[32mModel created\x1B[0m")
 
 
     def forward(self, src_lang_sent, dst_lang_sent):
@@ -75,7 +76,7 @@ class Transformer(nn.Module):
             [vocab_keys[val] for val in [vocab_values.index(word) 
                 for word in pred_sent]]
             )
-        print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", dst_lang_sent[index_sent])
+        print("--"*5 + "ORIGINAL" + "--"*5 ,"\n", '\x1B[32m',dst_lang_sent[index_sent], '\x1B[0m')
         print("--"*5 + "PREDICTED" + "--"*5 ,"\n", pred_train_sample)
     
     def translate(self, src_lang_sent):
