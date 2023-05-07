@@ -5,7 +5,9 @@ from decoder_layer import StackedDecoder
 from sentence_embedding import SentenceEmbedding
 import torch.nn.functional as F
 import torch
+import torch.optim as optim
 import os
+from datetime import datetime
 
 
 class Transformer(nn.Module):
@@ -125,19 +127,33 @@ class Transformer(nn.Module):
                 break
 
         return dst_lang_sent
-            
+    
+    def create_checkpoint(self, epoch, optimizer, path='./model', filename=None):
+        checkpoint = {
+            'epoch': epoch,
+            'model_state_dict': self.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict()
+        }
 
-    def save_model(self, path='./model'):
+        if filename is None:
+            filename = f"checkpoint_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
         if not os.path.exists(path):
             os.mkdir(path)
-
-        torch.save(self.params, path+'/nmt_params.pt') 
-        torch.save(self.state_dict(), path+'/nmt.pt')
+        
+        torch.save(self.params, f"{path}/model_attributes.pt")
+        torch.save(checkpoint, f"{path}/{filename}.pt")
 
     @staticmethod
-    def load_model(path):
-        loaded_params = torch.load(path+'/nmt_params.pt')
+    def load_checkpoint(path='./model', filename='final_model'):
+        loaded_params = torch.load(f"{path}/model_attributes.pt")
         model = Transformer(**loaded_params)
-        model.load_state_dict(torch.load(path+'/nmt.pt'))
+        optimizer = optim.Adam(model.parameters())
+        
+        checkpoint = torch.load(f"{path}/{filename}.pt")
+        epoch = checkpoint['epoch']
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         model.eval()
-        return model
+
+        return model, optimizer, epoch
+        

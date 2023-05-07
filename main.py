@@ -114,13 +114,15 @@ if __name__ == '__main__':
                                          vocab_keys, 
                                          vocab_values)
         print("\x1B[36mTraining Finished\x1B[0m")
-        
-        model.save_model(save_path)
+
+        save_model_name = 'final_model'        
+        model.create_checkpoint(epoch, optimizer, save_path, save_model_name)
         print(f"\x1B[33mModel saved at {save_path}\x1B[0m")
 
     # Translate
     if inference_flag:
-        model = Transformer.load_model(load_path)
+        saved_model_name = 'final_model'
+        model, _, _ = Transformer.load_checkpoint(load_path, saved_model_name)
         print(f"\x1B[34mModel loaded from {load_path}\x1B[0m")
 
         translate_sent = ["The court has fixed a hearing for February 12",
