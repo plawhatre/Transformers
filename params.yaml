@@ -16,15 +16,15 @@ training:
   flag:
     true
   train_from_checkpoint_flag:
-    true
+    false
   batch_size:
-    3
+    32
   epochs:
     2
   lang:
     "mr"
   sent_limit:
-    100 # -use wc -l loc/to/data/file and then decide on number
+    10000 # -use wc -l loc/to/data/file and then decide on number
   max_seq_len:
     150
   lr:
